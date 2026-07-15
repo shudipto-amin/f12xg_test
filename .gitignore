@@ -23,6 +23,7 @@ __pycache__/
 !*.bash
 !*.py
 !*.ipynb
+!*.md
 
 # Track these files
 !.gitignore
