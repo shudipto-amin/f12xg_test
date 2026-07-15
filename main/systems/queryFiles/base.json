@@ -16,6 +16,10 @@
         "monomer_f12": ["core", "gammas"],
         "dimer_f12": ["core", "gammas", "distances"]
     },
+    "methods": {
+        "dfmp2": "",
+        "f12": "_f12"
+    },
     "pivot_columns": ["basis_sizes"],
     "pivot_values": ["Correlation Energy", "Reference Energy"]
 }
