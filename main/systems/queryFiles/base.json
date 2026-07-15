@@ -1,0 +1,21 @@
+{
+    "query_dict_file": "query_dict.json",
+    "replace": {
+        "core": {
+            "": "frozen",
+            "core,0": "all electron"
+        }
+    },
+    "bases_families": {
+        "valence": ["aug-cc-pVDZ", "aug-cc-pVTZ", "aug-cc-pVQZ", "aug-cc-pV5Z"],
+        "core-valence": ["aug-cc-pwCVDZ", "aug-cc-pwCVTZ", "aug-cc-pwCVQZ", "aug-cc-pwCV5Z"]
+    },
+    "system_type": {
+        "monomer": ["core"],
+        "dimer": ["core", "distances"],
+        "monomer_f12": ["core", "gammas"],
+        "dimer_f12": ["core", "gammas", "distances"]
+    },
+    "pivot_columns": ["basis_sizes"],
+    "pivot_values": ["Correlation Energy", "Reference Energy"]
+}

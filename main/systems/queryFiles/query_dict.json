@@ -1,0 +1,14 @@
+{
+    "total energy" : {
+        "col_name" : "Total Energy",
+        "match_num" : -1
+    },
+    "correlation energy" : {
+        "col_name" : "Correlation Energy",
+        "match_num" : -1
+    },
+    "Reference energy" : {
+        "col_name" : "Reference Energy",
+        "match_num" : -1
+    }
+}
