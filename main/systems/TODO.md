@@ -4,8 +4,10 @@
       README.md "Known gaps"). Its old query config used `core_names`
       filters and a `gamma_set` pivot index instead of `system_type`, so it
       needs its own mapping worked out before it fits the current scheme.
-- [ ] Commit currently staged changes (`README.md`, etc.) once ready.
-- [ ] Resolve `ne_ar/example_default/example.py` and
-      `ne_ar/example_default/single_output_parser.py`: tracked in git but
-      missing from disk (unrelated to the pipeline refactor) — decide
-      whether to restore or remove from tracking.
+- [ ] Once `ne_ar/xg/` is migrated (above), extend
+      `Plot_from_Interaction_Tables.ipynb` to cover XG the same way it now
+      covers F12: work out XG's `outer_index` shape (its old `gamma_set`
+      likely maps to another `gammas`-like scan, possibly combined with the
+      F12 `gammas` axis) and reuse/extend `PFT.get_dfs`'s single-slice
+      extraction (`gamma=...`) so the existing interaction-energy plotting
+      cells work unmodified for XG too.

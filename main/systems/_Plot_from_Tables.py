@@ -15,16 +15,36 @@ from matplotlib.lines import Line2D
 
 
 
-def get_dfs(sysd):
+def get_dfs(sysd, gamma=None):
+    """
+    Read the combined dimer_and_monomer csv for each core in sysd['cores'].
+
+    If sysd['outer_index'] is set (e.g. 'gammas' for F12-type methods), the
+    combined table has one extra index level beyond the plain (dfmp2-like)
+    shape, so `gamma` must be given: the returned per-core dataframes are
+    sliced to that single gamma value (via `.xs`, which drops the level),
+    giving the same 2-level (tag, distances) shape as the plain case.
+    """
     dfs = dict()
     cores = sysd['cores']
+    outer_index = sysd.get('outer_index')
+    index_col = [0, 1, 2] if outer_index is not None else [0, 1]
+
     for core in cores:
         sysd['core'] = core
         fname = IF.get_combined_outfile_name(sysd)
         meta, df = ffa.MakeTables.read_metacsv(
             fname,
-            kwargs2=dict(header=[0,1], index_col=[0,1])
+            kwargs2=dict(header=[0,1], index_col=index_col)
         )
+
+        if outer_index is not None:
+            if gamma is None:
+                raise ValueError(
+                    f"sysd['outer_index']={outer_index!r} but no gamma given; "
+                    "pass get_dfs(sysd, gamma=...) to select a single-gamma slice"
+                )
+            df = df.xs(str(gamma), level=outer_index)
 
         dfs[core] = dict()
         dfs[core]['meta'] = dict(meta.values)
