@@ -14,11 +14,14 @@
         "monomer": ["core"],
         "dimer": ["core", "distances"],
         "monomer_f12": ["core", "gammas"],
-        "dimer_f12": ["core", "gammas", "distances"]
+        "dimer_f12": ["core", "gammas", "distances"],
+        "monomer_xg" : ["core", "gamma_set"],
+        "dimer_xg" : ["core", "gamma_set", "distances"]
     },
     "methods": {
         "dfmp2": "",
-        "f12": "_f12"
+        "f12": "_f12",
+        "xg" : "_xg"
     },
     "pivot_columns": ["basis_sizes"],
     "pivot_values": ["Correlation Energy", "Reference Energy"]
