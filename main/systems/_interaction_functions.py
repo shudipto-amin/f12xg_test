@@ -9,7 +9,8 @@ def get_HF_and_best_from_multimer_df(df, key1=None, key2=None):
     if key1 is None:
         key1 = ('Correlation Energy', 'BSE')
     if key2 is None:
-        key2 = ('Reference Energy', '5')
+        ref_cols = [c for c in df.columns if c[0] == 'Reference Energy' and c[1] != 'BSE']
+        key2 = max(ref_cols, key=lambda c: int(c[1]))
 
     
     #display(dimer_df[key1])

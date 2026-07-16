@@ -15,4 +15,8 @@
     - [x] Plot and compare
 - [x] Run XG Monomer for Ne, using same metadata.json as ne_ar minus distances
     - [ ] Tabulate
-- [ ] Run Tabulate for Ar
+- [x] Run Tabulate for Ar
+- [ ] Do XG properly, but keep the proxy function as an alternative for any dataframe
+- [ ] Reorganize the folders - make an interactions folder for all the dimer and monomers.
+    - [ ] Consider either putting dimer/ ne/ ar/ inside an ne_ar/ folder, and likewise for others
+

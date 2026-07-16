@@ -103,7 +103,10 @@ def build_sysd(args, base):
     mono_index_col = list(range(len(base['system_type'][mono_shape_key])))
     dimer_index_col = list(range(len(base['system_type'][dimer_shape_key])))
 
-    outer_index = 'gammas' if 'gammas' in base['system_type'][dimer_shape_key] else None
+    outer_index = next(
+        (k for k in base['system_type'][dimer_shape_key] if k not in ('core', 'distances')),
+        None,
+    )
 
     sysd = dict(
         mono1_name=mono1_name, mono2_name=mono2_name,
