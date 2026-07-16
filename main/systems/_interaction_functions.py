@@ -31,6 +31,28 @@ def get_inter(df, totkey=None, sumkey=None):
     dfie = dfdim[totkey] - dfsum[totkey]
     return dfie.index.values.astype(np.float16), dfie.values
 
+def get_inter_from_distance_proxy(df, totkey=None, monomer_sum_distance=9999.0):
+    """
+    Quick-and-dirty interaction energy for systems with no separate monomer
+    bse_data files yet: use the same (dimer-only) table's own row at
+    `monomer_sum_distance` as a stand-in for a true monomer sum, instead of
+    loading/summing separate monomer files (as combine_systems/get_inter do).
+
+    `df` must be indexed purely by 'distances' (already sliced down to a
+    single core/gamma_set/etc.) and have `totkey` as a column.
+    """
+    if totkey is None:
+        totkey = ('HF + ', 'CorrE(CBS)')
+
+    distances = df.index.get_level_values('distances').astype(float)
+    is_proxy = distances == float(monomer_sum_distance)
+
+    proxy_sum = df.loc[is_proxy, totkey].iloc[0]
+    dimer = df.loc[~is_proxy]
+
+    dfie = dimer[totkey] - proxy_sum
+    return dimer.index.get_level_values('distances').values.astype(np.float16), dfie.values
+
 def get_cbs_data(
         df, distance, exp=3
     ):
