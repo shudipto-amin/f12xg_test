@@ -47,6 +47,21 @@ parser.add_argument(
         default=False
         )
 parser.add_argument(
+        '--write_enerdf',
+        help="Also write the pre-pivot enerdf intermediate to a file; "
+             "defaults to 'data_energies.csv' next to dataFile",
+        nargs='?',
+        const=True,
+        default=False
+        )
+parser.add_argument(
+        '--enerdf_only',
+        help="Skip writing/printing the pivoted table entirely; only write "
+             "the enerdf intermediate (implies --write_enerdf if that "
+             "wasn't also given)",
+        action='store_true'
+        )
+parser.add_argument(
         '-d', '--debug',
         help="print out a bunch of stuff for debugging.",
         action='store_true'
@@ -130,8 +145,6 @@ def main(raw_df, queryData):
     pivot_rules = queryData['pivot_rules']
 
     enerdf = ffa.parse_outfiles_in_df(raw_df, query_dict)
-    if args.debug:
-        print(enerdf.to_string())
     df = ffa.filter_df(enerdf, filters)
     if "replace" in queryData:
         for key in queryData['replace']:
@@ -139,7 +152,7 @@ def main(raw_df, queryData):
 
     pdf = pd.pivot(df, **pivot_rules)   
 
-    return pdf
+    return enerdf, pdf
 
 def add_BSE(pdf):
     """
@@ -159,21 +172,32 @@ def add_BSE(pdf):
     pdf = pdf.sort_index(axis=1)
     return pdf
 
-def print_or_write(args, pdf, queryData):
+def print_or_write(args, pdf, enerdf, queryData):
     meta_for_csv = get_meta_for_csv(args.dataFile, queryData)
 
-    if args.write:
-        if isinstance(args.write, str):
-            csvout = args.write
+    if not args.enerdf_only:
+        if args.write:
+            if isinstance(args.write, str):
+                csvout = args.write
+            else:
+                csvout = os.path.join(
+                        os.path.dirname(args.dataFile),
+                        'pivot_table.csv'
+                        )
+            ffa.MakeTables.write_metacsv(meta_for_csv, pdf, csvout)
         else:
-            csvout = os.path.join(
+            print(json.dumps(meta_for_csv, indent=4))
+            print(pdf.to_string())
+
+    if args.write_enerdf or args.enerdf_only:
+        if isinstance(args.write_enerdf, str):
+            enerdf_out = args.write_enerdf
+        else:
+            enerdf_out = os.path.join(
                     os.path.dirname(args.dataFile),
-                    'pivot_table.csv'
+                    'data_energies.csv'
                     )
-        ffa.MakeTables.write_metacsv(meta_for_csv, pdf, csvout)
-    else:
-        print(json.dumps(meta_for_csv, indent=4))
-        print(pdf.to_string())
+        ffa.MakeTables.write_metacsv(meta_for_csv, enerdf, enerdf_out)
            
 def list_add_funcs():
     for key, value in locals().items():
@@ -189,17 +213,15 @@ if __name__ == "__main__":
     base = load_base_config(args.baseFile)
     queryData = build_query_data(base, args.baseFile, args.system_type, args.bases_family)
 
-    if args.debug:
-        print(json.dumps(queryData, indent=4))
-    
-    
     raw_df = ffa.get_data(args.dataFile, make_relative=True).fillna('')
     ffa.assign_basis_size(raw_df)
     
-    pdf = main(raw_df, queryData)
+    enerdf, pdf = main(raw_df, queryData)
     if args.debug:
+        print(json.dumps(queryData, indent=4))
+        print(enerdf.to_string())
         print(pdf.to_string())
 
     if args.add_bse:
         pdf = add_BSE(pdf)
-    print_or_write(args, pdf, queryData)
+    print_or_write(args, pdf, enerdf, queryData)

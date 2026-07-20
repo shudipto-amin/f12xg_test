@@ -1,12 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+write_enerdf_flag=()
+enerdf_only_flag=()
+args=()
+for arg in "$@"; do
+    case "$arg" in
+        --write_enerdf)
+            write_enerdf_flag=(--write_enerdf)
+            ;;
+        --enerdf_only)
+            enerdf_only_flag=(--enerdf_only)
+            ;;
+        *)
+            args+=("$arg")
+            ;;
+    esac
+done
+set -- "${args[@]}"
+
 if [[ $# -lt 4 ]]; then
-    echo "Usage: $0 mono1 mono2 dimer method [suffix] [bases_families]"
+    echo "Usage: $0 mono1 mono2 dimer method [suffix] [bases_families] [--write_enerdf] [--enerdf_only]"
     echo "  bases_families: space-separated list of queryFiles/base.json"
     echo "                  'bases_families' keys (e.g. \"valence\" or"
     echo "                  \"valence core-valence\"). Defaults to all keys"
     echo "                  present in base.json."
+    echo "  --write_enerdf: also write the pre-pivot enerdf intermediate"
+    echo "                  (data_energies.csv next to each data.csv)."
+    echo "  --enerdf_only:  skip writing the pivoted bse_data table"
+    echo "                  entirely; only write the enerdf intermediate."
     exit 1
 fi
 
@@ -44,7 +66,8 @@ make_tables() {
             "$base_config" \
             --system_type "$system_type" \
             --bases_family "$bases_family" --add_bse \
-            --write "${directory}/bse_data_${stem}.csv"
+            --write "${directory}/bse_data_${stem}.csv" \
+            "${write_enerdf_flag[@]}" "${enerdf_only_flag[@]}"
     done
 }
 
