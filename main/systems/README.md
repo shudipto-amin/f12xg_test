@@ -28,7 +28,7 @@ Stage 2 (dimer + its two monomers, same method/bases_family)
 <dimer>/<method>/bse_data_<bases_family>.csv  /
         |
         v
-Make_Interaction_Tables.py                    combines the three tables, adds
+_Interaction_Analysis.py                      combines the three tables, adds
   + queryFiles/base.json                       CBS/HF+CorrE(CBS) and interaction-
                                                 energy columns
         v
@@ -93,7 +93,7 @@ every system/method combination:
 - **`methods`** — maps a `method_dir` name (e.g. `dfmp2`, `f12`) to the
   suffix appended to `"monomer"`/`"dimer"` to get its `system_type` key
   (`""` for plain, `"_f12"` for the F12/`gammas` shape). Used by
-  `Make_Interaction_Tables.py` to infer `header`/`index_col` for a given
+  `_Interaction_Analysis.py` to infer `header`/`index_col` for a given
   method without a separate flag.
 - **`replace`** — value relabeling applied after parsing (e.g. Molpro's
   `core` column values become human-readable `frozen`/`all electron`).
@@ -140,12 +140,12 @@ Writes `<dir>/<method>/bse_data_valence.csv` and
 `<dir>/<method>/bse_data_core_valence.csv` for each of the three
 directories.
 
-### `Make_Interaction_Tables.py`
+### `_Interaction_Analysis.py`
 Stage 2: combines a dimer's `bse_data*.csv` with its two monomers'
 `bse_data*.csv` into interaction-energy tables. Replaces the hand-copied
 per-system-pair cells that used to live in `Make_Tables.ipynb`.
 ```
-python Make_Interaction_Tables.py <mono1_dir> <mono2_dir> <dimer_dir> <method_dir> \
+python _Interaction_Analysis.py <mono1_dir> <mono2_dir> <dimer_dir> <method_dir> \
     --bases_family {valence,core-valence} \
     [--mono1_name NAME] [--mono2_name NAME] \
     [--base_json queryFiles/base.json] [--debug]
@@ -163,11 +163,11 @@ python Make_Interaction_Tables.py <mono1_dir> <mono2_dir> <dimer_dir> <method_di
 4. `--mono1_name`/`--mono2_name` default to the title-cased directory name
    (e.g. `mono1_dir='ne'` → `'Ne'`) if not given.
 5. Reads the three `bse_data*.csv` files
-   (`_interaction_functions.prepare_and_combine_dataframes_from_files`),
+   (`_Interaction_Analysis.prepare_and_combine_dataframes_from_files`),
    combines them per `core` value (adding `Sum`/`Difference` rows and a
    CBS-extrapolated `HF + CorrE(CBS)` column), and writes one output file
    per `core`
-   (`_interaction_functions.write_combined` → `<dimer_dir>/<method_dir>/<outbasename>_<core>.csv`).
+   (`_Interaction_Analysis.write_combined` → `<dimer_dir>/<method_dir>/<outbasename>_<core>.csv`).
 
 ## Output
 
