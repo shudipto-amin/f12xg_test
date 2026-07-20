@@ -19,8 +19,9 @@
 - [x] Do XG properly, but keep the proxy function as an alternative for any dataframe
 - [x] Reorganize the folders - make an interactions folder for all the dimer and monomers.
     - [x] Consider either putting dimer/ ne/ ar/ inside an ne_ar/ folder, and likewise for others
-- [ ] Add a section to `Plot_from_Interaction_Tables.ipynb` comparing the sum
-      of F12 monomer values to XG's dimer value at `distance=9999.0` (its
+- [ ] Add a section to `Interaction_Analysis.ipynb` (renamed from
+      `Plot_from_Interaction_Tables.ipynb`) comparing the sum of F12 monomer
+      values to XG's dimer value at `distance=9999.0` (its
       monomer-sum-proxy row):
     1. XG's `gamma_set` is a string of the form
        `f"{gamma1:4.2f}_{gamma2:4.2f}_{gamma3:4.2f}"`.
@@ -30,4 +31,13 @@
     4. Sum those two, and subtract from the corresponding XG dimer value at
        `distance=9999.0`.
     5. Display the result as both a difference and a percentage difference.
+- [ ] Fix notebooks broken by the `_Plot_from_Tables.py`/`_interaction_functions.py`/
+      `Make_Interaction_Tables.py` -> `__visuals__/matplot.py` + `_Interaction_Analysis.py`
+      consolidation (see `Interaction_Analysis.ipynb` for the new import pattern:
+      `from __visuals__ import matplot` + `import _Interaction_Analysis as IA`,
+      calls `PFT.`/`IF.`/`MIT.` -> `matplot.`/`IA.`):
+    - [ ] `Plot_from_Tables.ipynb`
+    - [ ] `Make_Tables.ipynb`
+    - [ ] `Test_Make_Tables.ipynb`
+    - [ ] `data.csv_inspector.ipynb`
 
