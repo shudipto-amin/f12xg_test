@@ -38,6 +38,13 @@
           working off index position rather than name/exact value).
     - [x] Added `IA.parse_gamma_set(gamma_set)` -> `(gamma1, gamma2)`,
           reusable anywhere an XG `gamma_set` string needs decoding.
+- [ ] **HIGH PRIORITY** XG output verification
+    - [ ] Must contain "F12-XG CALCULATIONS BEGIN/END"
+    - [ ] For interactions, m_assignment_type should equal 1.
+    - [ ] GammaGroups for atom index: 0 should be 1s, all others should be 2s
+    - [ ] When the gammas are the same, for dimers the Difference between
+          tensors should be less than e-11 (or some tolerance value)
+    - [ ] For monomers, these differences should be small regardless of gamma.
 - [ ] Fix notebooks broken by the `_Plot_from_Tables.py`/`_interaction_functions.py`/
       `Make_Interaction_Tables.py` -> `__visuals__/matplot.py` + `_Interaction_Analysis.py`
       consolidation (see `Interaction_Analysis.ipynb` for the new import pattern:
