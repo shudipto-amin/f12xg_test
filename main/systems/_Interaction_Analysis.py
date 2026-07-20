@@ -75,27 +75,63 @@ def get_inter(df, totkey=None, sumkey=None):
     dfie = dfdim[totkey] - dfsum[totkey]
     return dfie.index.values.astype(np.float16), dfie.values
 
-def get_inter_from_distance_proxy(df, totkey=None, monomer_sum_distance=9999.0):
+def get_value_at_max_distance(df, totkey=None, distance_level=-1):
+    """
+    Extract `totkey` at df's own largest distance value (e.g. the 9999.0
+    placeholder row standing in for an infinite-separation/monomer-sum
+    limit), and the remaining rows with that row dropped.
+
+    `distance_level` defaults to the last index level (position, not name):
+    the combined dimer_and_monomer tables lose their level *names* once
+    written through combine_systems, so selecting by name ('distances')
+    isn't reliable, but 'distances' is always the innermost level by
+    construction (see base.json's 'system_type' orderings).
+
+    Generic on purpose: reusable for any dataframe carrying such a
+    placeholder row, not just XG's dimer-vs-monomer-sum proxy below.
+    """
+    if totkey is None:
+        totkey = ('HF + ', 'CorrE(CBS)')
+
+    distances = df.index.get_level_values(distance_level).astype(float)
+    is_max = distances == distances.max()
+
+    proxy_value = df.loc[is_max, totkey].iloc[0]
+    rest = df.loc[~is_max]
+    return proxy_value, rest
+
+def get_inter_from_distance_proxy(df, totkey=None):
     """
     Quick-and-dirty interaction energy for systems with no separate monomer
-    bse_data files yet: use the same (dimer-only) table's own row at
-    `monomer_sum_distance` as a stand-in for a true monomer sum, instead of
+    bse_data files yet: use the same (dimer-only) table's own row at its
+    largest distance value as a stand-in for a true monomer sum, instead of
     loading/summing separate monomer files (as combine_systems/get_inter do).
 
-    `df` must be indexed purely by 'distances' (already sliced down to a
+    `df` must be indexed purely by distance (already sliced down to a
     single core/gamma_set/etc.) and have `totkey` as a column.
     """
     if totkey is None:
         totkey = ('HF + ', 'CorrE(CBS)')
 
-    distances = df.index.get_level_values('distances').astype(float)
-    is_proxy = distances == float(monomer_sum_distance)
-
-    proxy_sum = df.loc[is_proxy, totkey].iloc[0]
-    dimer = df.loc[~is_proxy]
+    proxy_sum, dimer = get_value_at_max_distance(df, totkey=totkey)
 
     dfie = dimer[totkey] - proxy_sum
-    return dimer.index.get_level_values('distances').values.astype(np.float16), dfie.values
+    return dimer.index.get_level_values(-1).values.astype(np.float16), dfie.values
+
+
+def parse_gamma_set(gamma_set):
+    """
+    Parse an XG `gamma_set` string ("gamma1_gamma2_gamma3", see
+    generate_inputs_and_folders.write_expfile/combine_gammas) into its two
+    monomer-specific geminal exponents.
+
+    gamma1 is mono1's own exponent, gamma2 is mono2's own exponent; gamma3
+    is the cross term between the two monomers (defaults to their average)
+    and isn't needed once you're only comparing monomer-level quantities,
+    so it's dropped here.
+    """
+    gamma1, gamma2, _gamma3 = (float(g) for g in gamma_set.split('_'))
+    return gamma1, gamma2
 
 def get_cbs_data(
         df, distance, exp=3
