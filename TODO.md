@@ -14,7 +14,7 @@
     - [x] Continue making new xg column for HF4 + CorrE(4)
     - [x] Plot and compare
 - [x] Run XG Monomer for Ne, using same metadata.json as ne_ar minus distances
-    - [ ] Tabulate
+    - [x] Tabulate
 - [x] Run Tabulate for Ar
 - [x] Do XG properly, but keep the proxy function as an alternative for any dataframe
 - [x] Reorganize the folders - make an interactions folder for all the dimer and monomers.
