@@ -43,7 +43,9 @@ One row per Molpro calculation belonging to that `<system>/<method>` directory
 `full_file_prefix`, `outfile` (path to the `.out` file). Produced upstream by
 `generate_inputs_and_folders.py` / `run_inputs_and_folders.py` /
 `check_outputs_and_folders.py`, driven by that directory's `metadata.json`.
-Not covered by this README.
+Not covered by this README. Correctness of the `.out` files themselves
+(as opposed to whether the run completed) is checked separately by
+`check_xg_output_correctness.py` — see that script's docstring.
 
 ### `queryFiles/query_dict.json`
 What to extract from each `.out` file: for each search string (e.g.
@@ -89,7 +91,9 @@ every system/method combination:
   - `monomer` — a single atom/species, no `distances` (e.g. `ar/`, `ne/`)
   - `dimer` — a two-body system scanned over `distances` (e.g. `ne_ar/`)
   - `..._f12` variants — same, but the method also scans an F12 `gammas`
-    parameter (methods like `f12`/`xg`, as opposed to `dfmp2`)
+    parameter (method `f12`, as opposed to `dfmp2`)
+  - `..._xg` variants — same idea, but the method scans a `gamma_set`
+    parameter instead (method `xg`)
 - **`methods`** — maps a `method_dir` name (e.g. `dfmp2`, `f12`) to the
   suffix appended to `"monomer"`/`"dimer"` to get its `system_type` key
   (`""` for plain, `"_f12"` for the F12/`gammas` shape). Used by
@@ -194,9 +198,6 @@ before overwriting real output:
 
 ## Known gaps
 
-- `ne_ar/xg/` is not yet migrated to this pipeline: its old query config
-  used a different filter/pivot scheme (`core_names`/`gamma_set` instead of
-  `system_type`) that doesn't map onto `base.json` yet.
 - `analyze.ipynb` still references the pre-rename `default/` method
   directory name and the old `bse_data.csv`/`bse_data_wC.csv` filenames —
   left untouched since it's a deprecated notebook, not part of this
